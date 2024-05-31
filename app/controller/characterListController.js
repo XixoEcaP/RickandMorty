@@ -4,7 +4,7 @@ import { showLoadingSpinner, hideLoadingSpinner } from '../util/spinner.js';
 
 const characterListController = {
     currentPage: 1,
-    charactersPerPage:8,
+    charactersPerPage: 8,
     allCharacters: [],
     filteredCharacters: [],
     currentSearchTerm: '',
@@ -18,7 +18,7 @@ const characterListController = {
             if (characterListController.allCharacters.length === 0) {
                 characterListController.allCharacters = await RickAndMortyService.getAllCharacters();
             }
-            characterListController.filteredCharacters = characterListController.allCharacters;
+            characterListController.applySearchFilter();
             characterListController.renderPage(characterListController.currentPage);
         } catch (error) {
             console.error(error);
@@ -30,11 +30,19 @@ const characterListController = {
     search: (searchTerm) => {
         showLoadingSpinner();
         characterListController.currentSearchTerm = searchTerm;
-        characterListController.filteredCharacters = characterListController.allCharacters.filter(character =>
-            character.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        characterListController.applySearchFilter();
         characterListController.renderPage(1);
         hideLoadingSpinner();
+    },
+
+    applySearchFilter: () => {
+        if (characterListController.currentSearchTerm) {
+            characterListController.filteredCharacters = characterListController.allCharacters.filter(character =>
+                character.name.toLowerCase().includes(characterListController.currentSearchTerm.toLowerCase())
+            );
+        } else {
+            characterListController.filteredCharacters = characterListController.allCharacters;
+        }
     },
 
     getCurrentSearchTerm: () => {
@@ -69,3 +77,4 @@ const characterListController = {
 };
 
 export default characterListController;
+
